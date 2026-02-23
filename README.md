@@ -44,7 +44,7 @@ make create-topic
 - 外部 API: `https://jsonplaceholder.typicode.com/posts`
 - 宛先トピック: `quickstart-events`
 - キー: `post.userId` を文字列化した値
-- 値: `PostRecordMessage` を `JsonSerializer` でシリアライズした JSON
+- 値: `ProducerMessageResource` を `JsonSerializer` でシリアライズした JSON
 - レスポンス: `Posts sent to Kafka!`
 
 ```bash
@@ -60,6 +60,26 @@ curl -X POST http://localhost:8080/kafka/produce-posts
   "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
   "body": "quia et suscipit suscipit recusandae..."
 }
+```
+
+## JSONPlaceholder API
+
+- 公式: [JSONPlaceholder](https://jsonplaceholder.typicode.com/)
+- Base URL: [https://jsonplaceholder.typicode.com/](https://jsonplaceholder.typicode.com/)
+- このプロジェクトで利用しているエンドポイント: `GET /posts`
+- 実際の取得先: [https://jsonplaceholder.typicode.com/posts](https://jsonplaceholder.typicode.com/posts)
+
+`/kafka/produce-posts` 実行時は、上記 API から取得した以下の項目を使用します。
+
+- `userId`
+- `id`
+- `title`
+- `body`
+
+動作確認例:
+
+```bash
+curl https://jsonplaceholder.typicode.com/posts
 ```
 
 ## アーキテクチャ
