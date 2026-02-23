@@ -1,7 +1,7 @@
 package com.example.kafkaspringbootapp.infrastructure.external;
 
+import com.example.kafkaspringbootapp.infrastructure.resource.PostResponseResource;
 import com.example.kafkaspringbootapp.usecase.interfaces.PostFetchClient;
-import com.example.kafkaspringbootapp.infrastructure.resource.PostResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -20,11 +20,11 @@ public class PostFetchClientImp implements PostFetchClient {
     }
 
     @Override
-    public List<PostResource> fetchPosts() {
-        PostResource[] resources = restClient.get()
+    public List<PostResponseResource> fetchPosts() {
+        PostResponseResource[] resources = restClient.get()
                 .uri("/posts")
                 .retrieve()
-                .body(PostResource[].class);;
+                .body(PostResponseResource[].class);;
         return Arrays.asList(resources);
     }
 }

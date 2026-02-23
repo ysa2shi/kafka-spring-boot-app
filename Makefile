@@ -1,6 +1,8 @@
 KAFKA_CONTAINER=kafka
 BOOTSTRAP=localhost:9092
 TOPIC=quickstart-events
+PARTITIONS=3
+REPLICATION_FACTOR=1
 
 up:
 	docker compose up -d
@@ -20,10 +22,10 @@ create-topic:
 	docker exec -it $(KAFKA_CONTAINER) kafka-topics \
 	--create \
 	--if-not-exists \
-	--topic $(TOPIC) \
 	--bootstrap-server $(BOOTSTRAP) \
-	--partitions 1 \
-	--replication-factor 1
+	--topic $(TOPIC) \
+	--partitions $(PARTITIONS) \
+	--replication-factor $(REPLICATION_FACTOR)
 
 list-topics:
 	docker exec -it $(KAFKA_CONTAINER) kafka-topics \

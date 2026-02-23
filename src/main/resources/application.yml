@@ -4,21 +4,20 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
-
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      topic: quickstart-events
+      key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       acks: all
       retries: 3
-
     consumer:
+      enabled: false
+      topic: quickstart-events
       group-id: demo-group
       auto-offset-reset: earliest
       enable-auto-commit: true
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 logging:
   level:
-    org.apache.kafka: INFO
-    org.springframework.kafka: INFO
+    root: INFO

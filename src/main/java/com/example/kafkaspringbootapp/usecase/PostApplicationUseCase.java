@@ -1,9 +1,9 @@
 package com.example.kafkaspringbootapp.usecase;
 
 import com.example.kafkaspringbootapp.domain.model.PostFactory;
-import com.example.kafkaspringbootapp.usecase.interfaces.PostFetchClient;
 import com.example.kafkaspringbootapp.infrastructure.KafkaPostProducer;
-import com.example.kafkaspringbootapp.infrastructure.resource.PostResource;
+import com.example.kafkaspringbootapp.infrastructure.resource.PostResponseResource;
+import com.example.kafkaspringbootapp.usecase.interfaces.PostFetchClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class PostApplicationUseCase {
 
     public void fetchAndSendPosts() {
         // 1. 外部APIからDTOを取得
-        List<PostResource> resources = postFetchClient.fetchPosts();
+        List<PostResponseResource> resources = postFetchClient.fetchPosts();
 
         // 2. Factoryでドメインに変換
         resources.stream()

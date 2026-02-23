@@ -1,11 +1,8 @@
-package com.example.kafkaspringbootapp.infrastructure.resource;
+package com.example.kafkaspringbootapp.consumer.resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * 外部APIから受け取るPostリソース
- */
-public record PostResource(
+public record ConsumerMessageResource(
         @JsonProperty("userId") Long userId,
         @JsonProperty("id") Long id,
         @JsonProperty("title") String title,
