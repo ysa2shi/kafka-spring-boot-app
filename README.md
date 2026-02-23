@@ -1,13 +1,14 @@
 # Kafka Spring Boot App
 
-Spring Boot + Apache Kafka で、HTTP エンドポイントから Kafka にメッセージ送信する PoC アプリです。  
-`/kafka/send` では固定文字列を、`/kafka/produce-posts` では外部 API から取得したデータを JSON 形式で送信します。
+Spring Boot + Apache Kafka で、HTTP エンドポイント経由で Kafka に JSON メッセージを送る PoC アプリです。  
+`/kafka/produce-posts` を呼ぶと、外部 API から取得した Post を Kafka トピックへ送信します。
 
 ## 技術スタック
 
 - Java 21
 - Spring Boot 3.5.9
 - Spring for Apache Kafka 3.3.11
+- Lombok 1.18.42
 - Docker Compose (Zookeeper, Kafka, Kafka UI)
 
 ## 前提条件
@@ -37,24 +38,13 @@ make create-topic
 
 ## エンドポイント
 
-### 1. 固定文字列を送信
-
-- Method/Path: `POST /kafka/send`
-- 宛先トピック: `quickstart-events`
-- 送信値: `"hello kafka"`（文字列）
-- レスポンス: `Message sent!`
-
-```bash
-curl -X POST http://localhost:8080/kafka/send
-```
-
-### 2. 外部 API の Post 一覧を JSON 送信
+### 外部 API の Post 一覧を JSON 送信
 
 - Method/Path: `POST /kafka/produce-posts`
 - 外部 API: `https://jsonplaceholder.typicode.com/posts`
 - 宛先トピック: `quickstart-events`
-- キー: `post.userId.value`（文字列）
-- 値: `Post` ドメインオブジェクトを `JsonSerializer` でシリアライズした JSON
+- キー: `post.userId` を文字列化した値
+- 値: `PostRecordMessage` を `JsonSerializer` でシリアライズした JSON
 - レスポンス: `Posts sent to Kafka!`
 
 ```bash
@@ -65,12 +55,55 @@ curl -X POST http://localhost:8080/kafka/produce-posts
 
 ```json
 {
-  "userId": { "value": 1 },
-  "id": { "value": 1 },
-  "title": { "value": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit" },
-  "body": { "value": "quia et suscipit suscipit recusandae..." }
+  "userId": 1,
+  "id": 1,
+  "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+  "body": "quia et suscipit suscipit recusandae..."
 }
 ```
+
+## アーキテクチャ
+
+```mermaid
+flowchart LR
+    API["POST /kafka/produce-posts"]
+    PRODUCER["Producer\n(KafkaPostProducer)"]
+    KAFKA["Kafka\nTopic: quickstart-events"]
+    CONSUMER["Consumer\n(KafkaPostConsumer)"]
+
+    API --> PRODUCER
+    PRODUCER --> KAFKA
+    KAFKA --> CONSUMER
+```
+
+## Producer 送信経路（API → Kafka）
+
+```mermaid
+flowchart LR
+    CLIENT["Client"]
+    API["Producer API\nPOST /kafka/produce-posts"]
+    USECASE["PostApplicationUseCase"]
+    EXTERNAL["external/PostFetchClientImp"]
+    OUTSIDE_API["External API\njsonplaceholder.typicode.com/posts"]
+    FACTORY["PostFactory\n(PostResponseResource -> Post)"]
+    PRODUCER["KafkaPostProducer"]
+    KAFKA["Kafka\nTopic: quickstart-events"]
+
+    CLIENT --> API
+    API --> USECASE
+    USECASE --> EXTERNAL
+    EXTERNAL --> OUTSIDE_API
+    USECASE --> FACTORY
+    FACTORY --> PRODUCER
+    PRODUCER --> KAFKA
+```
+
+## Consumer の有効化
+
+Consumer はデフォルトで無効です（`application.yml` の `spring.kafka.consumer.enabled: false`）。
+
+有効化する場合は `spring.kafka.consumer.enabled: true` に変更して再起動してください。  
+有効化後は `KafkaPostConsumer` が `quickstart-events` を購読し、`log.info` で受信ログを出力します。
 
 ## メッセージ確認
 
@@ -89,6 +122,15 @@ make consume-cli
 ```bash
 ./gradlew test
 ```
+
+## 設定値（application.yml）
+
+- Kafka bootstrap server: `localhost:9092`
+- Producer topic: `quickstart-events`
+- Producer serializer: key/value とも `JsonSerializer`
+- Consumer topic: `quickstart-events`
+- Consumer deserializer: key=`StringDeserializer`, value=`JsonDeserializer`
+- Logging level: `root=INFO`
 
 ## Makefile の主要コマンド
 
