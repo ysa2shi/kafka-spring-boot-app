@@ -3,7 +3,7 @@ package com.example.kafkaspringbootapp.infrastructure.resource;
 /**
  * Kafka送信用のデータ転送オブジェクト (DTO)
  */
-public record PostRecordMessage(
+public record ProducerMessageResource(
         Long userId,
         Long id,
         String title,

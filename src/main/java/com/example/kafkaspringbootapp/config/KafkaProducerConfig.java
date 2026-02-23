@@ -1,9 +1,6 @@
 package com.example.kafkaspringbootapp.config;
 
-import com.example.kafkaspringbootapp.domain.model.Post;
-import com.example.kafkaspringbootapp.infrastructure.resource.PostRecordMessage;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -3,7 +3,7 @@ package com.example.kafkaspringbootapp.infrastructure;
 import com.example.kafkaspringbootapp.config.KafkaProperties;
 import com.example.kafkaspringbootapp.domain.interfaces.PostProducer;
 import com.example.kafkaspringbootapp.domain.model.Post;
-import com.example.kafkaspringbootapp.infrastructure.resource.PostRecordMessage;
+import com.example.kafkaspringbootapp.infrastructure.resource.ProducerMessageResource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,7 +19,7 @@ public class KafkaPostProducer implements PostProducer {
 
     @Override
     public void send(Post post) {
-        PostRecordMessage message = new PostRecordMessage(
+        ProducerMessageResource message = new ProducerMessageResource(
                 post.userId().value(),
                 post.id().value(),
                 post.title().value(),
